@@ -1,0 +1,140 @@
+#!/bin/bash
+
+show_help() {
+    echo "usage:     create_project domain app_name"
+    echo "example:   create_project com.example demo"
+}
+
+if [ -z $1 ]; then
+    show_help
+    exit 1
+fi
+
+if [ -z $2 ]; then
+    show_help
+    exit 1
+fi
+
+DOMAIN=$1
+APP_NAME=$2
+
+cd $(dirname ${BASH_SOURCE})
+TEMPLATE_PATH=`pwd`
+PARENT_PATH=`dirname ${TEMPLATE_PATH}`
+PROJECT_PATH=${PARENT_PATH}/generated/${APP_NAME}
+mkdir -p ${PARENT_PATH}/generated
+
+if [ -d ${PROJECT_PATH} ]; then
+    echo "${PROJECT_PATH} already exsit!"
+    exit 1
+fi
+
+TEMPLATE_APP_NAME="appname"
+TEMPLATE_DOMAIN="com.domain"
+TEMPLATE_PROJECT_ID="j2objc_project"
+TEMPLATE_J2OBJC_PATH="/path_to_j2objc"
+TEMPLATE_PACKAGE_NAME=${TEMPLATE_DOMAIN}.${TEMPLATE_APP_NAME}
+TEMPLATE_PACKAGE_PATH=${TEMPLATE_PACKAGE_NAME//./\/}
+TEMPLATE_DROID=${TEMPLATE_APP_NAME}.droid
+TEMPLATE_IOS=${TEMPLATE_APP_NAME}.ios
+TEMPLATE_XCODE=${TEMPLATE_APP_NAME}.xcode
+
+PACKAGE_NAME=${DOMAIN}.${APP_NAME}
+PACKAGE_PATH=${PACKAGE_NAME//./\/}
+DROID=${APP_NAME}.droid
+IOS=${APP_NAME}.ios
+# must be same as app_name
+XCODE=${APP_NAME}
+
+print_env() {
+    echo ""
+    echo "---- PRINT ENV ----"
+    echo "TEMPLATE_PATH: "${TEMPLATE_PATH}
+    echo "PARENT_PATH: "${PARENT_PATH}
+    echo "PROJECT_PATH: "${PROJECT_PATH}
+    echo "DOMAIN: "${DOMAIN}
+    echo "APP_NAME: "${APP_NAME}
+    echo "PACKAGE_NAME: "${PACKAGE_NAME}
+    echo "PACKAGE_PATH: "${PACKAGE_PATH}
+    echo "DROID: "${DROID}
+    echo "IOS: "${IOS}
+    echo "XCODE: "${XCODE}
+    echo "---- PRINT ENV ----"
+    echo ""
+}
+
+get_j2objc_path() {
+    echo `which j2objc | xargs readlink | xargs dirname | xargs dirname`
+}
+
+sed_diamon_app_name() {
+    grep -rl ${TEMPLATE_DOMAIN} $1 | LANG=C xargs sed -i.bak.domain "s/${TEMPLATE_DOMAIN}/${DOMAIN}/g"
+    find $1 -name "*.bak.domain" | xargs rm -rf
+    grep -rl ${TEMPLATE_APP_NAME} $1 | LANG=C xargs sed -i.bak.appname "s/${TEMPLATE_APP_NAME}/${APP_NAME}/g"
+    find $1 -name "*.bak.appname" | xargs rm -rf
+    grep -rl ${TEMPLATE_PROJECT_ID} $1 | LANG=C xargs sed -i.bak.project "s/${TEMPLATE_PROJECT_ID}/${APP_NAME}/g"
+    find $1 -name "*.bak.project" | xargs rm -rf
+
+    J2OBJC_PATH=$(get_j2objc_path)
+    if [ -n ${J2OBJC_PATH} ]; then
+        grep -rl ${TEMPLATE_J2OBJC_PATH} $1 | LANG=C xargs sed -i.bak.j2objc "s#${TEMPLATE_J2OBJC_PATH}#${J2OBJC_PATH}#g"
+        find $1 -name "*.bak.j2objc" | xargs rm -rf
+    fi
+}
+
+create_project() {
+    echo "creating project ..."
+    \cp -aR ${TEMPLATE_PATH} ${PROJECT_PATH}
+    rm -rf ${PROJECT_PATH}/.git ${PROJECT_PATH}/create_project
+    sed_diamon_app_name ${PROJECT_PATH}
+    mv ${PROJECT_PATH}/${TEMPLATE_PROJECT_ID}.iml ${PROJECT_PATH}/${APP_NAME}.iml
+}
+
+create_droid() {
+    echo "Creating droid ..."
+    mv ${PROJECT_PATH}/${TEMPLATE_DROID} ${PROJECT_PATH}/${DROID}
+    mv ${PROJECT_PATH}/${DROID}/${TEMPLATE_APP_NAME}.droid.iml ${PROJECT_PATH}/${DROID}/${APP_NAME}.droid.iml
+
+    mkdir -p ${PROJECT_PATH}/${DROID}/src/main/java_temp/${PACKAGE_PATH}/droid
+    mv ${PROJECT_PATH}/${DROID}/src/main/java/${TEMPLATE_PACKAGE_PATH}/droid/* \
+       ${PROJECT_PATH}/${DROID}/src/main/java_temp/${PACKAGE_PATH}/droid
+    rm -rf ${PROJECT_PATH}/${DROID}/src/main/java
+    mv ${PROJECT_PATH}/${DROID}/src/main/java_temp ${PROJECT_PATH}/${DROID}/src/main/java
+
+    mkdir -p ${PROJECT_PATH}/${DROID}/src/androidTest/java_temp/${PACKAGE_PATH}/droid
+    mv ${PROJECT_PATH}/${DROID}/src/androidTest/java/${TEMPLATE_PACKAGE_PATH}/droid/* \
+       ${PROJECT_PATH}/${DROID}/src/androidTest/java_temp/${PACKAGE_PATH}/droid
+    rm -rf ${PROJECT_PATH}/${DROID}/src/androidTest/java
+    mv ${PROJECT_PATH}/${DROID}/src/androidTest/java_temp ${PROJECT_PATH}/${DROID}/src/androidTest/java
+}
+
+create_ios() {
+    echo "Creating ios ..."
+    mv ${PROJECT_PATH}/${TEMPLATE_IOS} ${PROJECT_PATH}/${IOS}
+    mv ${PROJECT_PATH}/${IOS}/${TEMPLATE_APP_NAME}.ios.iml ${PROJECT_PATH}/${IOS}/${APP_NAME}.ios.iml
+
+    mkdir -p ${PROJECT_PATH}/${IOS}/src/main/java_temp/${PACKAGE_PATH}/ios
+    mv ${PROJECT_PATH}/${IOS}/src/main/java/${TEMPLATE_PACKAGE_PATH}/ios/* \
+       ${PROJECT_PATH}/${IOS}/src/main/java_temp/${PACKAGE_PATH}/ios
+    mv ${PROJECT_PATH}/${IOS}/src/main/java/AppDelegate.java ${PROJECT_PATH}/${IOS}/src/main/java_temp
+    rm -rf ${PROJECT_PATH}/${IOS}/src/main/java
+    mv ${PROJECT_PATH}/${IOS}/src/main/java_temp ${PROJECT_PATH}/${IOS}/src/main/java
+}
+
+create_xcode() {
+    echo "Creating xcode ..."
+    mv ${PROJECT_PATH}/${TEMPLATE_XCODE} ${PROJECT_PATH}/${XCODE}
+    mv ${PROJECT_PATH}/${XCODE}/${TEMPLATE_APP_NAME}.xcodeproj ${PROJECT_PATH}/${XCODE}/${APP_NAME}.xcodeproj
+    mv ${PROJECT_PATH}/${XCODE}/${TEMPLATE_APP_NAME} ${PROJECT_PATH}/${XCODE}/${APP_NAME}
+}
+
+print_env
+create_project
+create_droid
+create_ios
+create_xcode
+
+echo ""
+echo "Project Path: ${PROJECT_PATH}"
+echo "DONE!"
+echo ""
