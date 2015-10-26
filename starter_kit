@@ -37,7 +37,7 @@ create_project() {
 generate_demo() {
     bash ${ROOT_PATH}/project_template/create_project com.example j2objc_demo && \
         rm -rf ${ROOT_PATH}/generated/j2objc_demo/j2objc_demo.ios/src && \
-        cp -R ${ROOT_PATH}/demo_src ${ROOT_PATH}/generated/j2objc_demo/j2objc_demo.ios/src
+        cp -R ${ROOT_PATH}/demo_src/java_src ${ROOT_PATH}/generated/j2objc_demo/j2objc_demo.ios/src
 }
 
 

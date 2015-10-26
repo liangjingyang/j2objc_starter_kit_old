@@ -1,16 +1,16 @@
 package com.example.j2objc_demo.ios;
 
 
+import com.example.j2objc_demo.ios.Block.BlockDemoViewController;
+import com.example.j2objc_demo.ios.KVO.KVODemoViewController;
+import com.example.j2objc_demo.ios.UILabelDemo.UILabelDemoViewController;
+import com.example.j2objc_demo.ios.util.Pair;
+
 import java.util.ArrayList;
 
-import apple.coregraphics.CGPoint;
-import apple.coregraphics.CGRect;
-import apple.coregraphics.CGSize;
 import apple.foundation.NSIndexPath;
 import apple.uikit.NSIndexPathExtensions;
 import apple.uikit.UIColor;
-import apple.uikit.UIFont;
-import apple.uikit.UILabel;
 import apple.uikit.UIScreen;
 import apple.uikit.UITableView;
 import apple.uikit.UITableViewCell;
@@ -25,20 +25,47 @@ import apple.uikit.UIViewAutoresizing;
 import apple.uikit.UIViewController;
 
 
-public class ViewController extends UIViewController {
+
+public class MainMenuViewController extends UIViewController {
 
     private String mTitle = "J2objc Demo";
-    private final ArrayList<String> mDemoTitles;
+    private final ArrayList<Pair<String, UIViewController>> mDemoTitles;
     private UITableViewDelegate mTableViewDelegate;
     private UITableViewDataSource mTableViewDataSource;
 
-    public ViewController() {
+    public MainMenuViewController() {
         this.setTitle(mTitle);
         mDemoTitles = new ArrayList<>();
-        mDemoTitles.add("Label");
+        Pair<String, UIViewController> pairKVO = new Pair<>("KVO",
+                (UIViewController) new KVODemoViewController());
+        Pair<String, UIViewController> pairBlock = new Pair<>("Block Argument",
+                (UIViewController) new BlockDemoViewController());
+        Pair<String, String> pairCallObjc = new Pair<>("Call some native ObjC code", "CallObjcDemo");
+//        UIView
+        Pair<String, UIViewController> pairUILabel = new Pair<>("UILabel",
+                (UIViewController) new UILabelDemoViewController());
+        Pair<String, String> pairUIAlertView = new Pair<>("UIAlertView", "UIAlertViewDemo");
+        Pair<String, String> pairUIButton = new Pair<>("UIButton", "UIButtonDemo");
+        Pair<String, String> pairUIImageView = new Pair<>("UIImageView", "UIImageViewDemo");
+        Pair<String, String> pairUITabBar = new Pair<>("UITabBar", "UITabBarDemo");
+        Pair<String, String> pairUITextField = new Pair<>("UITextField", "UITextFieldDemo");
+        Pair<String, String> pairUISearchBar = new Pair<>("UISearchBar", "UISearchBarDemo");
+
+        mDemoTitles.add(pairKVO);
+        mDemoTitles.add(pairBlock);
+//        mDemoTitles.add(pairCallObjc);
+        mDemoTitles.add(pairUILabel);
+//        mDemoTitles.add(pairUIAlertView);
+//        mDemoTitles.add(pairUIButton);
+//        mDemoTitles.add(pairUIImageView);
+//        mDemoTitles.add(pairUITabBar);
+//        mDemoTitles.add(pairUITextField);
+//        mDemoTitles.add(pairUISearchBar);
     }
 
+    @Override
     public void loadView() {
+//        weak reference here, shouldn't be normal variable.
         mTableViewDelegate = new TableViewDelegate();
         mTableViewDataSource = new TableViewDataSource();
 
@@ -55,11 +82,13 @@ public class ViewController extends UIViewController {
         setView(view);
     }
 
+    @Override
     public void viewWillAppear(boolean animated) {
         getNavigationController().setDelegate(null);
         super.viewWillAppear(animated);
     }
 
+    @Override
     public void viewDidLoad() {
         super.viewDidLoad();
 //        UILabel label = new UILabel(CGRect.create(CGPoint.Zero(), CGSize.create(300, 100)));
@@ -69,23 +98,25 @@ public class ViewController extends UIViewController {
 //        getView().addSubview(label);
     }
 
+    @Override
     public void didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning();
     }
 
 
+    /**
+     * Implement the delegate by inheriting corresponding Adapter class
+     */
     public class TableViewDelegate extends UITableViewDelegateAdapter {
         @Override
         public void didSelectRow(UITableView tableView, NSIndexPath indexPath) {
             tableView.deselectRow(indexPath, true);
             UIViewController demoViewController = null;
             int row = (int) NSIndexPathExtensions.getRow(indexPath);
-            switch (row) {
-                case 0:
-                    System.out.println("first demo");
-                    break;
-                default:
-                    break;
+            if (row < mDemoTitles.size()) {
+                Pair<String, UIViewController> pair = mDemoTitles.get(row);
+                mTitle = pair.getLeft();
+                demoViewController = pair.getRight();
             }
             if (demoViewController != null) {
                 getNavigationController().pushViewController(demoViewController, true);
@@ -94,6 +125,7 @@ public class ViewController extends UIViewController {
     }
 
     public class TableViewDataSource extends UITableViewDataSourceAdapter {
+
         @Override
         public long getNumberOfSections(UITableView tableView) {
             return 1;
@@ -108,7 +140,10 @@ public class ViewController extends UIViewController {
         public UITableViewCell getCellForRow(UITableView tableView, NSIndexPath indexPath) {
             UITableViewCell tableViewCell = new UITableViewCell();
             int row = (int) NSIndexPathExtensions.getRow(indexPath);
-            tableViewCell.getTextLabel().setText(mDemoTitles.get(row));
+            if (row < mDemoTitles.size()) {
+                Pair<String, UIViewController> pair = mDemoTitles.get(row);
+                tableViewCell.getTextLabel().setText(pair.getLeft());
+            }
             tableViewCell.setAccessoryType(UITableViewCellAccessoryType.DisclosureIndicator);
             return tableViewCell;
         }

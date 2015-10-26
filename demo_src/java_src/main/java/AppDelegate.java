@@ -1,5 +1,5 @@
 
-import com.example.j2objc_demo.ios.ViewController;
+import com.example.j2objc_demo.ios.MainMenuViewController;
 
 import apple.foundation.NSDictionary;
 import apple.uikit.UIApplication;
@@ -16,7 +16,7 @@ public class AppDelegate extends UIApplicationDelegateAdapter {
     @Override
     public boolean didFinishLaunching(UIApplication application, NSDictionary<?, ?> launchOptions) {
         mWindow = new UIWindow(UIScreen.getMainScreen().getBounds());
-        UIViewController viewController = new ViewController();
+        UIViewController viewController = new MainMenuViewController();
         UINavigationController navigationController = new UINavigationController(viewController);
         mWindow.setRootViewController(navigationController);
         mWindow.makeKeyAndVisible();
