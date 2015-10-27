@@ -4,7 +4,7 @@ package com.example.j2objc_demo.ios;
 import com.example.j2objc_demo.ios.Block.BlockDemoViewController;
 import com.example.j2objc_demo.ios.CallNative.CallNativeDemoViewController;
 import com.example.j2objc_demo.ios.KVO.KVODemoViewController;
-import com.example.j2objc_demo.ios.UILabelDemo.UILabelDemoViewController;
+import com.example.j2objc_demo.ios.UIComponentDemo.UIComponentDemo;
 import com.example.j2objc_demo.ios.util.Pair;
 
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ import apple.uikit.UIViewAutoresizing;
 import apple.uikit.UIViewController;
 
 
-
 public class MainMenuViewController extends UIViewController {
 
     private String mTitle = "J2objc Demo";
@@ -37,6 +36,8 @@ public class MainMenuViewController extends UIViewController {
     public MainMenuViewController() {
         this.setTitle(mTitle);
         mDemoTitles = new ArrayList<>();
+        Pair<String, UIViewController> pairUIComponents = new Pair<>("UI Components",
+                (UIViewController) new UIComponentDemo());
         Pair<String, UIViewController> pairKVO = new Pair<>("KVO",
                 (UIViewController) new KVODemoViewController());
         Pair<String, UIViewController> pairBlock = new Pair<>("Block Argument",
@@ -44,27 +45,10 @@ public class MainMenuViewController extends UIViewController {
         Pair<String, UIViewController> pairCallObjc = new Pair<>("Call the native Objc",
                 (UIViewController) new CallNativeDemoViewController());
 
-//        UIView
-        Pair<String, UIViewController> pairUILabel = new Pair<>("UILabel",
-                (UIViewController) new UILabelDemoViewController());
-//        Pair<String, String> pairUIAlertView = new Pair<>("UIAlertView", "UIAlertViewDemo");
-//        Pair<String, String> pairUIButton = new Pair<>("UIButton", "UIButtonDemo");
-//        Pair<String, String> pairUIImageView = new Pair<>("UIImageView", "UIImageViewDemo");
-//        Pair<String, String> pairUITabBar = new Pair<>("UITabBar", "UITabBarDemo");
-//        Pair<String, String> pairUITextField = new Pair<>("UITextField", "UITextFieldDemo");
-//        Pair<String, String> pairUISearchBar = new Pair<>("UISearchBar", "UISearchBarDemo");
-
+        mDemoTitles.add(pairUIComponents);
         mDemoTitles.add(pairKVO);
         mDemoTitles.add(pairBlock);
         mDemoTitles.add(pairCallObjc);
-
-        mDemoTitles.add(pairUILabel);
-//        mDemoTitles.add(pairUIAlertView);
-//        mDemoTitles.add(pairUIButton);
-//        mDemoTitles.add(pairUIImageView);
-//        mDemoTitles.add(pairUITabBar);
-//        mDemoTitles.add(pairUITextField);
-//        mDemoTitles.add(pairUISearchBar);
     }
 
     @Override
@@ -95,18 +79,12 @@ public class MainMenuViewController extends UIViewController {
     @Override
     public void viewDidLoad() {
         super.viewDidLoad();
-//        UILabel label = new UILabel(CGRect.create(CGPoint.Zero(), CGSize.create(300, 100)));
-//        label.setText("Hello world!");
-//        label.setFont(UIFont.getSystemFont(20));
-//        getView().setBackgroundColor(UIColor.white());
-//        getView().addSubview(label);
     }
 
     @Override
     public void didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning();
     }
-
 
     /**
      * Implement the delegate by inheriting corresponding Adapter class
