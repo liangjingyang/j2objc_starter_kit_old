@@ -11,8 +11,8 @@
     return self;
 }
 
-- (void)getText:(int) count{
-    return ;
+- (NSString *)getText:(int) count withWho:(NSString *) who{
+    return [@"Hello " stringByAppendingString:who];
 }
 
 - (int)getInt:(int (^)(void)) block{

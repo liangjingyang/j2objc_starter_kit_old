@@ -2,6 +2,7 @@ package com.example.j2objc_demo.ios;
 
 
 import com.example.j2objc_demo.ios.Block.BlockDemoViewController;
+import com.example.j2objc_demo.ios.CallNative.CallNativeDemoViewController;
 import com.example.j2objc_demo.ios.KVO.KVODemoViewController;
 import com.example.j2objc_demo.ios.UILabelDemo.UILabelDemoViewController;
 import com.example.j2objc_demo.ios.util.Pair;
@@ -40,20 +41,23 @@ public class MainMenuViewController extends UIViewController {
                 (UIViewController) new KVODemoViewController());
         Pair<String, UIViewController> pairBlock = new Pair<>("Block Argument",
                 (UIViewController) new BlockDemoViewController());
-        Pair<String, String> pairCallObjc = new Pair<>("Call some native ObjC code", "CallObjcDemo");
+        Pair<String, UIViewController> pairCallObjc = new Pair<>("Call the native Objc",
+                (UIViewController) new CallNativeDemoViewController());
+
 //        UIView
         Pair<String, UIViewController> pairUILabel = new Pair<>("UILabel",
                 (UIViewController) new UILabelDemoViewController());
-        Pair<String, String> pairUIAlertView = new Pair<>("UIAlertView", "UIAlertViewDemo");
-        Pair<String, String> pairUIButton = new Pair<>("UIButton", "UIButtonDemo");
-        Pair<String, String> pairUIImageView = new Pair<>("UIImageView", "UIImageViewDemo");
-        Pair<String, String> pairUITabBar = new Pair<>("UITabBar", "UITabBarDemo");
-        Pair<String, String> pairUITextField = new Pair<>("UITextField", "UITextFieldDemo");
-        Pair<String, String> pairUISearchBar = new Pair<>("UISearchBar", "UISearchBarDemo");
+//        Pair<String, String> pairUIAlertView = new Pair<>("UIAlertView", "UIAlertViewDemo");
+//        Pair<String, String> pairUIButton = new Pair<>("UIButton", "UIButtonDemo");
+//        Pair<String, String> pairUIImageView = new Pair<>("UIImageView", "UIImageViewDemo");
+//        Pair<String, String> pairUITabBar = new Pair<>("UITabBar", "UITabBarDemo");
+//        Pair<String, String> pairUITextField = new Pair<>("UITextField", "UITextFieldDemo");
+//        Pair<String, String> pairUISearchBar = new Pair<>("UISearchBar", "UISearchBarDemo");
 
         mDemoTitles.add(pairKVO);
         mDemoTitles.add(pairBlock);
-//        mDemoTitles.add(pairCallObjc);
+        mDemoTitles.add(pairCallObjc);
+
         mDemoTitles.add(pairUILabel);
 //        mDemoTitles.add(pairUIAlertView);
 //        mDemoTitles.add(pairUIButton);

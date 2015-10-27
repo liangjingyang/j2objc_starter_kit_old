@@ -2,7 +2,7 @@
 
 @interface NativeDemo : NSObject
 
-- (void)getText:(int) count;
+- (NSString *)getText:(int) count withWho:(NSString *) who;
 
 - (int)getInt:(int (^)(void)) block;
 
