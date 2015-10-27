@@ -9,7 +9,7 @@ PROJECTS = APPIOS
 .PHONY: $(PROJECTS)
 
 PROJECT_PATH = ..
-APP_NAME = j2objc_demo
+APP_NAME = appname
 GENERATED_DEST = $(APP_NAME)/generated
 NATIVE = $(APP_NAME)/native
 MANIFEST_DEST = build_temp
@@ -41,7 +41,7 @@ compile = j2objc -cp $(call getclasspaths,$($(1)_DEPENDSON)) \
 
 SYNC_MANIFEST = $(call getmanifest,SYNC)
 $(SYNC_MANIFEST): $(shell mkdir -p $(GENERATED_DEST)) $(shell find $(GENERATED_DEST) -name "*.m") $(shell find $(GENERATED_DEST) -name "*.h")
-	rm -rf $(GENERATED_DEST)/native
+	rm -rf $(GENERATED_DEST)/generated_native
 	cp -a $(APP_NAME)/native $(GENERATED_DEST)/generated_native
 	integratej2objc integrate_source -x $(APP_NAME).xcodeproj -s $(GENERATED_DEST) -g "$(GENERATED_DEST)" -t $(APP_NAME)
 	touch $(SYNC_MANIFEST)
